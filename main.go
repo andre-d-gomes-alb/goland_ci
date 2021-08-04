@@ -58,7 +58,10 @@ func main() {
 
 func returnAllArticles(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(Articles)
+	err := json.NewEncoder(w).Encode(Articles)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func returnSingleArticle(w http.ResponseWriter, r *http.Request) {
@@ -67,13 +70,19 @@ func returnSingleArticle(w http.ResponseWriter, r *http.Request) {
 	for _, article := range Articles {
 		if article.Id == key {
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(article)
+			err := json.NewEncoder(w).Encode(article)
+			if err != nil {
+				fmt.Println(err)
+			}
 			return
 		}
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusBadRequest)
-	json.NewEncoder(w).Encode(Error{"Invalid id", 400})
+	err := json.NewEncoder(w).Encode(Error{"Invalid id", 400})
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func createNewArticle(w http.ResponseWriter, r *http.Request) {
@@ -83,13 +92,19 @@ func createNewArticle(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(Error{"Invalid body", 400})
+		err2 := json.NewEncoder(w).Encode(Error{"Invalid body", 400})
+		if err2 != nil {
+			fmt.Println(err2)
+		}
 		return
 	}
 	Articles = append(Articles, article)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(article)
+	err2 := json.NewEncoder(w).Encode(article)
+	if err2 != nil {
+		fmt.Println(err2)
+	}
 }
 
 func deleteArticle(w http.ResponseWriter, r *http.Request) {
@@ -105,13 +120,19 @@ func deleteArticle(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusBadRequest)
-	json.NewEncoder(w).Encode(Error{"Invalid id", 400})
+	err := json.NewEncoder(w).Encode(Error{"Invalid id", 400})
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func updateArticle(w http.ResponseWriter, r *http.Request) {
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	var update Update
-	json.Unmarshal(reqBody, &update)
+	err := json.Unmarshal(reqBody, &update)
+	if err != nil {
+		fmt.Println(err)
+	}
 	vars := mux.Vars(r)
 	id := vars["id"]
 	for index, article := range Articles {
@@ -128,11 +149,17 @@ func updateArticle(w http.ResponseWriter, r *http.Request) {
 			Articles = append(Articles[:index], article)
 
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(article)
+			err := json.NewEncoder(w).Encode(article)
+			if err != nil {
+				fmt.Println(err)
+			}
 			return
 		}
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusBadRequest)
-	json.NewEncoder(w).Encode(Error{"Invalid id", 400})
+	err2 := json.NewEncoder(w).Encode(Error{"Invalid id", 400})
+	if err2 != nil {
+		fmt.Println(err2)
+	}
 }
