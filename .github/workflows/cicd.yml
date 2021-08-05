@@ -132,14 +132,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Read VERSION file
+        id: getversion
+        run: echo "::set-output name=version::$(cat VERSION)"
       - name: Release Notes
         run:
           echo "${{github.event.head_commit.message}}" >> ".github/RELEASE-TEMPLATE.md"
       - name: Release with Notes
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{env.VERSION}}
-          release_name: ${{env.VERSION}}
+          tag_name: ${{steps.getversion.outputs.version}}
+          release_name: ${{steps.getversion.outputs.version}}
           body_path: ".github/RELEASE-TEMPLATE.md"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
