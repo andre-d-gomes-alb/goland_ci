@@ -104,10 +104,12 @@ jobs:
           GOOSARCH=${{matrix.goosarch}}
           GOOS=${GOOSARCH%/*}
           GOARCH=${GOOSARCH#*/}
+          VERSION=${{steps.getversion.outputs.version}}
           BINARY_NAME=${{github.repository}}-$GOOS-$GOARCH-${{steps.getversion.outputs.version}}
           echo "BINARY_NAME=$BINARY_NAME" >> $GITHUB_ENV
           echo "GOOS=$GOOS" >> $GITHUB_ENV
           echo "GOARCH=$GOARCH" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Build
         run: |
           go build -o "$BINARY_NAME" -v
@@ -136,8 +138,8 @@ jobs:
       - name: Release with Notes
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{build.steps.getversion.outputs.version}}
-          release_name: ${{build.steps.getversion.outputs.version}}
+          tag_name: ${{env.VERSION}}
+          release_name: ${{env.VERSION}}
           body_path: ".github/RELEASE-TEMPLATE.md"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
