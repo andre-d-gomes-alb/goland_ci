@@ -115,7 +115,7 @@ jobs:
       # Create Release
       - name: Release Notes
         run:
-          ${{github.event.head_commit.message}} >> ".github/RELEASE-TEMPLATE.md"
+          echo "${{github.event.head_commit.message}}" >> ".github/RELEASE-TEMPLATE.md"
       - name: Release with Notes
         uses: softprops/action-gh-release@v1
         with:
