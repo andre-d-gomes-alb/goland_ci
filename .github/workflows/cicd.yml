@@ -96,12 +96,15 @@ jobs:
       - uses: actions/setup-go@v2
         with:
           go-version: '1.16.5'
+      - name: Read VERSION file
+        id: getversion
+        run: echo "::set-output name=version::$(cat VERSION)"
       - name: Get OS and arch info
         run: |
           GOOSARCH=${{matrix.goosarch}}
           GOOS=${GOOSARCH%/*}
           GOARCH=${GOOSARCH#*/}
-          BINARY_NAME=${{github.repository}}-$GOOS-$GOARCH
+          BINARY_NAME=${{github.repository}}-$GOOS-$GOARCH-${{steps.getversion.outputs.version}}
           echo "BINARY_NAME=$BINARY_NAME" >> $GITHUB_ENV
           echo "GOOS=$GOOS" >> $GITHUB_ENV
           echo "GOARCH=$GOARCH" >> $GITHUB_ENV
@@ -110,18 +113,15 @@ jobs:
           go build -o "$BINARY_NAME" -v
           
       # Create Release
-      - name: Read VERSION file
-        id: getversion
-        run: echo "::set-output name=version::$(cat VERSION)"
       - name: Release Notes
         run:
           git log $(git describe HEAD~ --tags --abbrev=0)..HEAD --pretty='format:* %h %s%n  * %an <%ae>' --no-merges >> ".github/RELEASE-TEMPLATE.md"
       - name: Release with Notes
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.getversion.outputs.version }}
-          release_name: ${{ steps.getversion.outputs.version }}
+          tag_name: ${{steps.getversion.outputs.version}}
+          release_name: ${{steps.getversion.outputs.version}}
           body_path: ".github/RELEASE-TEMPLATE.md"
           files: ${{env.BINARY_NAME}}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
