@@ -127,6 +127,7 @@ jobs:
     name: Create Release
     runs-on: 'ubuntu-latest'
     needs: build
+    if: $(git describe HEAD~ --tags --abbrev=0) == $(cat VERSION)
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
