@@ -113,6 +113,20 @@ jobs:
           go build -o "$BINARY_NAME" -v
           
       # Create Release
+      - name: Add file to release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{steps.getversion.outputs.version}}
+          release_name: ${{steps.getversion.outputs.version}}
+          files: ${{env.BINARY_NAME}}
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+  # Create Release
+  release:
+    name: Create Release
+    runs-on: 'ubuntu-latest'
+    needs: build
       - name: Release Notes
         run:
           echo "${{github.event.head_commit.message}}" >> ".github/RELEASE-TEMPLATE.md"
@@ -122,6 +136,5 @@ jobs:
           tag_name: ${{steps.getversion.outputs.version}}
           release_name: ${{steps.getversion.outputs.version}}
           body_path: ".github/RELEASE-TEMPLATE.md"
-          files: ${{env.BINARY_NAME}}
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
