@@ -43,6 +43,7 @@ jobs:
     name: Build binary
     runs-on: 'ubuntu-latest'
     needs: test
+    if: echo "$(git describe HEAD~ --tags --abbrev=0)" == echo "$(cat VERSION)"
     strategy:
       matrix:
         goosarch:
@@ -127,7 +128,6 @@ jobs:
     name: Create Release
     runs-on: 'ubuntu-latest'
     needs: build
-    if: $(git describe HEAD~ --tags --abbrev=0) == $(cat VERSION)
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
