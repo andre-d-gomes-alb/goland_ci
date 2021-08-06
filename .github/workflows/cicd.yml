@@ -145,6 +145,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Read VERSION file
+        id: version
+        run: echo "::set-output name=version::$(cat VERSION)"
       - name: Release Notes
         run:
           echo "${{github.event.head_commit.message}}" >> ".github/RELEASE-TEMPLATE.md"
