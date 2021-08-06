@@ -29,7 +29,6 @@ type Update struct {
 }
 
 var Articles []Article
-var Errors []Error
 
 func homePage(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome to the HomePage!")
@@ -52,16 +51,6 @@ func main() {
 	Articles = []Article{
 		{Id: "1", Title: "Hello", Desc: "Article Description", Content: "Article Content"},
 		{Id: "2", Title: "Hello 2", Desc: "Article Description", Content: "Article Content"},
-	}
-	Errors = []Error{
-		{
-			Msg:  "Invalid body",
-			Code: 400,
-		},
-		{
-			Msg:  "Invalid id",
-			Code: 400,
-		},
 	}
 	log.Fatal(http.ListenAndServe(":10000", Router()))
 }
@@ -89,7 +78,7 @@ func returnSingleArticle(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusBadRequest)
-	err := json.NewEncoder(w).Encode(Errors[1])
+	err := json.NewEncoder(w).Encode(Error{"Invalid id", 400})
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -102,7 +91,7 @@ func createNewArticle(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
-		err2 := json.NewEncoder(w).Encode(Errors[0])
+		err2 := json.NewEncoder(w).Encode(Error{"Invalid body", 400})
 		if err2 != nil {
 			fmt.Println(err2)
 		}
@@ -130,7 +119,7 @@ func deleteArticle(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusBadRequest)
-	err := json.NewEncoder(w).Encode(Errors[1])
+	err := json.NewEncoder(w).Encode(Error{"Invalid id", 400})
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -168,7 +157,7 @@ func updateArticle(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusBadRequest)
-	err2 := json.NewEncoder(w).Encode(Errors[1])
+	err2 := json.NewEncoder(w).Encode(Error{"Invalid id", 400})
 	if err2 != nil {
 		fmt.Println(err2)
 	}
