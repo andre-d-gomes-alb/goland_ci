@@ -50,17 +50,13 @@ jobs:
         run: |
           echo "::set-output name=version::$(cat VERSION)"
           echo "::set-output name=tag::$(git describe HEAD~ --tags --abbrev=0)"
-          VERSION=${{steps.getversion.outputs.version}}
-          TAG=${{steps.getversion.outputs.tag}}
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "TAG=$TAG" >> $GITHUB_ENV
   
   # Test build stability for Linux and Windows
   build:
     name: Build binary
     runs-on: 'ubuntu-latest'
     needs: version
-    if: ${{env.VERSION != env.TAG}}
+    if: ${{jobs.version.steps.outputs.version != jobs.version.steps.outputs.tag}}
     strategy:
       matrix:
         goosarch:
@@ -119,7 +115,7 @@ jobs:
           GOOSARCH=${{matrix.goosarch}}
           GOOS=${GOOSARCH%/*}
           GOARCH=${GOOSARCH#*/}
-          BINARY_NAME=${{github.repository}}-$GOOS-$GOARCH-${{env.VERSION}}
+          BINARY_NAME=${{github.repository}}-$GOOS-$GOARCH-${{jobs.version.steps.outputs.version}}
           echo "BINARY_NAME=$BINARY_NAME" >> $GITHUB_ENV
           echo "GOOS=$GOOS" >> $GITHUB_ENV
           echo "GOARCH=$GOARCH" >> $GITHUB_ENV
@@ -131,8 +127,8 @@ jobs:
       - name: Add file to release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{env.VERSION}}
-          release_name: ${{env.VERSION}}
+          tag_name: ${{jobs.version.steps.outputs.version}}
+          release_name: ${{jobs.version.steps.outputs.version}}
           files: ${{env.BINARY_NAME}}
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
@@ -145,17 +141,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Read VERSION file
-        id: version
-        run: echo "::set-output name=version::$(cat VERSION)"
       - name: Release Notes
         run:
           echo "${{github.event.head_commit.message}}" >> ".github/RELEASE-TEMPLATE.md"
       - name: Release with Notes
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{env.VERSION}}
-          release_name: ${{env.VERSION}}
+          tag_name: ${{jobs.version.steps.outputs.version}}
+          release_name: ${{jobs.version.steps.outputs.version}}
           body_path: ".github/RELEASE-TEMPLATE.md"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
