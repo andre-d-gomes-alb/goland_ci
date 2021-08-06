@@ -48,6 +48,8 @@ jobs:
       tag: ${{ steps.gettag.outputs.tag }}
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - id: getversion
         run: echo "::set-output name=version::$(cat VERSION)"
       - id: gettag
