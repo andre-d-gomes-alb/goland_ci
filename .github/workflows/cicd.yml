@@ -38,11 +38,29 @@ jobs:
           go-version: '1.16.5'
       - run: go test -v -cover
   
+  # Check version
+  version:
+    name: Check version
+    runs-on: 'ubuntu-latest'
+    needs: test
+    steps:
+      - uses: actions/checkout@v2
+      - name: Read VERSION file
+        id: getversion
+        run: |
+          echo "::set-output name=version::$(cat VERSION)"
+          echo "::set-output name=tag::$(git describe HEAD~ --tags --abbrev=0)"
+          VERSION=${{steps.getversion.outputs.version}}
+          TAG=${{steps.getversion.outputs.tag}}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "TAG=$TAG" >> $GITHUB_ENV
+  
   # Test build stability for Linux and Windows
   build:
     name: Build binary
     runs-on: 'ubuntu-latest'
-    needs: test
+    needs: version
+    if: ${{env.VERSION != env.TAG}}
     strategy:
       matrix:
         goosarch:
@@ -96,15 +114,12 @@ jobs:
       - uses: actions/setup-go@v2
         with:
           go-version: '1.16.5'
-      - name: Read VERSION file
-        id: getversion
-        run: echo "::set-output name=version::$(cat VERSION)"
       - name: Get OS and arch info
         run: |
           GOOSARCH=${{matrix.goosarch}}
           GOOS=${GOOSARCH%/*}
           GOARCH=${GOOSARCH#*/}
-          BINARY_NAME=${{github.repository}}-$GOOS-$GOARCH-${{steps.getversion.outputs.version}}
+          BINARY_NAME=${{github.repository}}-$GOOS-$GOARCH-${{env.VERSION}}
           echo "BINARY_NAME=$BINARY_NAME" >> $GITHUB_ENV
           echo "GOOS=$GOOS" >> $GITHUB_ENV
           echo "GOARCH=$GOARCH" >> $GITHUB_ENV
@@ -116,8 +131,8 @@ jobs:
       - name: Add file to release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{steps.getversion.outputs.version}}
-          release_name: ${{steps.getversion.outputs.version}}
+          tag_name: ${{env.VERSION}}
+          release_name: ${{env.VERSION}}
           files: ${{env.BINARY_NAME}}
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
@@ -136,8 +151,8 @@ jobs:
       - name: Release with Notes
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{steps.getversion.outputs.version}}
-          release_name: ${{steps.getversion.outputs.version}}
+          tag_name: ${{env.VERSION}}
+          release_name: ${{env.VERSION}}
           body_path: ".github/RELEASE-TEMPLATE.md"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
