@@ -31,7 +31,7 @@ type Update struct {
 var Articles []Article
 
 func homePage(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome to the HomePage.")
+	fmt.Fprintf(w, "Welcome to the HomePage!")
 }
 
 func Router() *mux.Router {
