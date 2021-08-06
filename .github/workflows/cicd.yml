@@ -42,7 +42,7 @@ jobs:
   version:
     name: Check version
     runs-on: 'ubuntu-latest'
-    #needs: test
+    needs: test
     outputs:
       version: ${{ steps.getversion.outputs.version }}
       tag: ${{ steps.gettag.outputs.tag }}
