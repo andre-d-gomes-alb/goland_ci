@@ -51,7 +51,7 @@ jobs:
       - id: getversion
         run: echo "::set-output name=version::$(cat VERSION)"
       - id: gettag
-        run: echo "::set-output name=tag::$(git describe HEAD~ --tags --abbrev=0)"
+        run: echo "::set-output name=tag::$(git describe --tags --abbrev=0)"
   
   # Test build stability for Linux and Windows
   build:
