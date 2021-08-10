@@ -135,8 +135,8 @@ jobs:
         run: |
           go build -o "$BINARY_NAME" -v
           
-      # Create Release
-      - name: Add file to release
+      # Add binary to release
+      - name: Add binary to release
         if: ${{needs.version.outputs.version != needs.version.outputs.tag}}
         uses: softprops/action-gh-release@v1
         with:
@@ -148,7 +148,7 @@ jobs:
 
   # Create Release
   release:
-    name: Create Release
+    name: Create release
     runs-on: 'ubuntu-latest'
     needs: [build, version]
     if: ${{needs.version.outputs.version != needs.version.outputs.tag}}
