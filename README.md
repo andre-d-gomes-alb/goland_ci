@@ -1,10 +1,10 @@
 # CI/CD with GitHub Actions in Go
 
-### [Fluxo de trabalho](https://github.com/andre-d-gomes/goland_ci/blob/main/.github/workflows/cicd.yml):
-  1. **Teste a sintaxe** executando uma verificação de linting com [golangci-lint](https://golangci-lint.run/). Lint é uma ferramenta de análise de código estática usada para sinalizar erros de programação, bugs, erros estilísticos e construções suspeitas.
-  2. **Teste a funcionalidade** pela execução de **[testes de unidade](https://github.com/andre-d-gomes/goland_ci/blob/main/main_test.go)** em todo o programa.
-  3. **Verifica** qual é a **[versão da ultima release](https://github.com/andre-d-gomes/goland_ci/releases)** executada e qual a **[versão no commit](https://github.com/andre-d-gomes/goland_ci/blob/main/VERSION)**.
-  4. **Teste a estabilidade de compilação** tentando compilar o programa para Linux and Windows.
-      - **Se a versão foi atualizada** no commit, **os binários** resultantes da compilação **são guardados na release**.
-  5. **Se a versão foi atualizada** no commit, **cria uma release da nova versão** de acordo com um [template de release](https://github.com/andre-d-gomes/goland_ci/blob/main/.github/RELEASE-TEMPLATE.md).
+### [Workflow](https://github.com/andre-d-gomes/goland_ci/blob/main/.github/workflows/cicd.yml):
+  1. **Test syntax** by running a linting check with [golangci-lint](https://golangci-lint.run/). Lint is a static code analysis tool used to flag programming errors, bugs, stylistic errors and suspicious constructs.
+  2. **Test functionality** by running automated **[unit tests](https://github.com/andre-d-gomes/goland_ci/blob/main/main_test.go)** on the entire program.
+  3. **Checks** which **[version of the last release](https://github.com/andre-d-gomes/goland_ci/releases)** was executed and which **[version in the commit](https://github.com/andre-d-gomes/goland_ci/blob/main/VERSION)**.
+  4. **Test build stability** by attempting to build the program for Linux and Windows.
+      - **If the version was updated** on commit, the resulting build **binaries are saved in the release**.
+  5. **If the version was updated** on commit, **creates a release of the new version** according to a [release template](https://github.com/andre-d-gomes/goland_ci/blob/main/.github/RELEASE-TEMPLATE.md).
  
